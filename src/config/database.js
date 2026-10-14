@@ -1,17 +1,12 @@
 import { Sequelize } from "sequelize";
 
-const sequelize = new Sequelize.define("primer-parcial_resolucion","root","",{
-    "primer"
-})
-import { Sequelize } from "sequelize";
-
 export const sequelize = new Sequelize(
-  process.env.DB_NAME,
-  process.env.DB_USER,
-  process.env.DB_PASSWORD,
+  "gestion_proyectos", // nombre de la BD
+  "root",              // usuario
+  "",                  // contraseña vacía
   {
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
+    host: "localhost",
+    port: 3306,
     dialect: "mysql",
     logging: false,
   }
@@ -20,9 +15,12 @@ export const sequelize = new Sequelize(
 export const connectDB = async () => {
   try {
     await sequelize.authenticate();
+    console.log("Conexión exitosa a la base de datos");
+
     await sequelize.sync();
-    console.log("Conectado a la base de datos");
+
+    console.log("Modelos sincronizados");
   } catch (error) {
-    console.log("Error al conectarse a la base de datos:", error);
+    console.error("Error al conectar:", error);
   }
 };
