@@ -1,30 +1,27 @@
+import "dotenv/config";
 import express from "express";
-import { sequelize } from "./src/config/database.js";
-import { UserModel } from "./src/models/user.model.js";
-import { ProfileModel } from "./src/models/profile.model.js";
-import ProjectTechnologyMode from "./src/models/project.model.js"
-import { ProjectModel } from "./src/models/project.model.js";
-import { ProjectTechnologyModel } from "./src/models/project_technology.model.js";
-import TechnologyModel from "./src/models/technology.model.js"
+import cookieParser from "cookie-parser";
+import cors from "cors";
+import { connectDB } from "./src/config/database.js";
+import "./src/models/index.js";
+import { authRoutes } from "./src/routes/auth.routes.js";
+import { userRoutes } from "./src/routes/users.routes.js";
+import { projectRoutes } from "./src/routes/projects.routes.js";
+import { technologyRoutes } from "./src/routes/technologies.routes.js";
 
 const app = express();
+const PORT = process.env.PORT || 3000;
 
-const PORT = 3000;
+app.use(cors({ origin: true, credentials: true }));
+app.use(express.json());
+app.use(cookieParser());
 
-const connectDB = async () => {
-    try {
-        await sequelize.authenticate();
-        console.log("Base de datos conectada");
-
-        // Opcional: sincronizar modelos
-        await sequelize.sync();
-
-    } catch (error) {
-        console.error("Error al conectar la BD:", error);
-    }
-};
+app.use("/api", authRoutes);
+app.use("/api", userRoutes);
+app.use("/api", projectRoutes);
+app.use("/api", technologyRoutes);
 
 app.listen(PORT, async () => {
-    await connectDB();
-    console.log(`Servidor corriendo en el puerto ${PORT}`);
+  await connectDB();
+  console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });
